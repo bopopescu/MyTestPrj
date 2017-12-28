@@ -1,0 +1,80 @@
+# *-* coding:UTF-8 *-*
+'''
+Created on 2015-12-23
+
+@author: kingbiwu
+'''
+from pyquery import PyQuery as pyq
+import urllib
+import os
+import csv
+import re
+import json
+from matchTest import MatchPage
+
+
+lgid = 3773
+rnd = 17
+mmatchid_list = []
+
+
+#中超赔率脚本
+def setPeilv_zc():
+    zcMP.getMatchPinfo_nl(rnd)
+#     print zcMP.mmatchid_list
+
+    zcMP.getDXpeilv(zcMP.mmatchid_list)
+    for i in range(len(zcMP.mmatdetl_list)):
+        zcMP.mmatdetl_list[i].extend(zcMP.dapl_list[i])
+#         print zcMP.mmatdetl_list[i]
+    
+    
+    zcMP.teamName_list = []
+    fileName = u'中超联赛-赔率_' + str(rnd) + u'轮.csv'
+    mfile = open(fileName, 'wb')
+    writer = csv.writer(mfile)
+    writer.writerow('时间    主队    比分    客队    胜平负    胜    平    负    大球    小球'.encode('gbk').split('    '))
+    for line in zcMP.mmatdetl_list:
+        if line[1].decode('gbk').find('辽宁盘锦宏运') >= 0:
+            line[1] = '辽宁宏运'.encode('gbk')
+#         print line[1].decode('gbk')
+        if line[3].decode('gbk').find('辽宁盘锦宏运') >= 0:
+            line[3] = '辽宁宏运'.encode('gbk')
+        if line[1].decode('gbk') not in zcMP.teamName_list:
+            zcMP.teamName_list.append(line[1].decode('gbk'))
+        if line[3].decode('gbk') not in zcMP.teamName_list:
+            zcMP.teamName_list.append(line[3].decode('gbk'))
+#         print line[3].decode('gbk')
+        writer.writerow(line)
+    mfile.close()
+
+def setPreVsRd_zc():
+    if len(zcMP.mmatchid_list) == 0:
+        zcMP.getMatchid_nl(lgid, rnd)
+    zcMP.getPreviousRd(zcMP.mmatchid_list)
+    tmpTlist = zcMP.teamName_list[:]
+    
+#     for line in zcMP.preRd_list:
+#         tmpstr1 = line[1].decode('gbk')
+#         tmpstr3 = line[3].decode('gbk')
+#         mlen = len(tmpTlist)
+#         for i in range(mlen):
+#             if tmpstr1 in tmpTlist[i]:
+#                 line[1] = tmpTlist[i].encode('gbk')
+#             if tmpstr3 in tmpTlist[i]:
+#                 line[3] = tmpTlist[i].encode('gbk')
+
+    zcMP.writePreviousRd()
+    
+def setNbyret_zc():
+    if len(zcMP.mmatchid_list) == 0:
+        zcMP.getMatchid_nl(lgid, rnd)
+    zcMP.getNearbyResult(zcMP.teamdict)
+    zcMP.writeNearbyResult()
+    
+if __name__ == '__main__':
+    zcMP = MatchPage(lgid,rnd)
+    setPeilv_zc()
+    setPreVsRd_zc()
+#     setPreVsRd_zc()
+#     setNbyret_zc()
