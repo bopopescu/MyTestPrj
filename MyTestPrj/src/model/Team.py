@@ -131,13 +131,13 @@ class Team(object):
                 break
             
             if self.teamid == self.rsp_json['list'][mLen-1-i]['HOMETEAMID']:
-                masterScore = int(self.rsp_json['list'][mLen-1-i]['HOMESCORE'])
-                slaveScore = int(self.rsp_json['list'][mLen-1-i]['AWAYSCORE'])
+                mainScore = int(self.rsp_json['list'][mLen-1-i]['HOMESCORE'])
+                subordinateScore = int(self.rsp_json['list'][mLen-1-i]['AWAYSCORE'])
             else:
-                masterScore = int(self.rsp_json['list'][mLen-1-i]['AWAYSCORE'])
-                slaveScore = int(self.rsp_json['list'][mLen-1-i]['HOMESCORE'])
+                mainScore = int(self.rsp_json['list'][mLen-1-i]['AWAYSCORE'])
+                subordinateScore = int(self.rsp_json['list'][mLen-1-i]['HOMESCORE'])
 #             pdb.set_trace()
-            if masterScore - slaveScore == sce:
+            if mainScore - subordinateScore == sce:
                 diff = tempTag - count
                 odds = 3.0
                 lastbet = 50 * (2 ** (diff-1))
@@ -204,7 +204,7 @@ class Team(object):
         return False
 
     # 总进球数含关键进球数
-    def analysisTeamMasterTotalBall(self, sce=(0,), showDetl=True):
+    def analysisTeamMainTotalBall(self, sce=(0,), showDetl=True):
         if self.rsp_json == '':
             self.getTeamData()
         maxcycle = 0
